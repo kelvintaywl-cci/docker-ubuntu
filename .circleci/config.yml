@@ -17,9 +17,10 @@ jobs:
 workflows:
   main:
     jobs:
-      matrix:
-        parameters:
-          docker-version:
-            - 19.03.13
-            - 20.10.17
-            # we deprecated 17.09.0-ce
+      - build:
+          matrix:
+            parameters:
+              docker-version:
+                - 19.03.13
+                - 20.10.17
+                # we deprecated 17.09.0-ce

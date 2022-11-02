@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  build:
+    parameters:
+      docker-version:
+        type: string
+    docker:
+      - image: docker:17.10.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: << parameters.docker-version >>
+      - run: |
+          docker build -t ubu:<< parameters.docker-version >> .
+
+workflows:
+  main:
+    jobs:
+      matrix:
+        parameters:
+          docker-version:
+            - 19.03.13
+            - 20.10.17
+            # we deprecated 17.09.0-ce

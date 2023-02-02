@@ -1,34 +1,24 @@
 version: 2.1
 
 jobs:
-  build:
+  pull:
     parameters:
-      docker-version:
+      img:
         type: string
     docker:
-      - image: docker:17.10.0-ce-git
+      - image: cimg/base:current
     resource_class: medium
     steps:
       - checkout
-      - setup_remote_docker:
-          version: << parameters.docker-version >>
-      - run: |
-          docker build -t ubu:<< parameters.docker-version >> .
+      - setup_remote_docker
+      - run: docker pull << parameters.img >>
 
 workflows:
   main:
     jobs:
-      - build:
+      - pull:
           matrix:
             parameters:
-              docker-version:
-                # See https://circleci.com/docs/building-docker-images/#docker-version
-                - 19.03.13
-                - 20.10.17
-                - 20.10.14
-                - 20.10.12
-                - 20.10.11
-                - 20.10.7
-                - 20.10.6
-                - 20.10.2
-                # we deprecated 17.09.0-ce
+              img:
+                - "ubuntu:20.04"
+                - "ubuntu:18.04"

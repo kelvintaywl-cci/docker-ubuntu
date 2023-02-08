@@ -13,6 +13,7 @@ commands:
   check-psql:
     steps:
       - run: psql --version
+      - run: dockerize -wait tcp://127.0.0.1:5432
       - run: PGPASSWORD=hogehoge psql -h 127.0.0.1 -p 5432 -U foobar -d postgres -c "SELECT 1;"
 
 jobs:

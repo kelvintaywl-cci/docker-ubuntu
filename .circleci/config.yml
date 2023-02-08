@@ -1,34 +1,28 @@
 version: 2.1
 
-jobs:
-  build:
-    parameters:
-      docker-version:
-        type: string
+executors:
+  ruby_with_postgres:
     docker:
-      - image: docker:17.10.0-ce-git
-    resource_class: medium
+      - image: cimg/ruby:2.7.7-node
+        <<: *ruby_envs
+      - image: 'circleci/postgres:13-buster-ram'
+        environment:
+          - POSTGRES_USER: foobar
+          - POSTGRES_PASSWORD: hogehoge
+
+jobs:
+  postgres13:
+    resource_class: small
+    executor: ruby_with_postgres
     steps:
       - checkout
-      - setup_remote_docker:
-          version: << parameters.docker-version >>
-      - run: |
-          docker build -t ubu:<< parameters.docker-version >> .
+      - run:
+          name: Install psql
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client-13
 
 workflows:
   main:
     jobs:
-      - build:
-          matrix:
-            parameters:
-              docker-version:
-                # See https://circleci.com/docs/building-docker-images/#docker-version
-                - 19.03.13
-                - 20.10.17
-                - 20.10.14
-                - 20.10.12
-                - 20.10.11
-                - 20.10.7
-                - 20.10.6
-                - 20.10.2
-                # we deprecated 17.09.0-ce
+      - postgres13

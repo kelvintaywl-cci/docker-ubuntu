@@ -9,18 +9,29 @@ executors:
           - POSTGRES_USER: foobar
           - POSTGRES_PASSWORD: hogehoge
 
+commands:
+  check-psql:
+    steps:
+      - run: psql --version
+
 jobs:
   postgres13:
     resource_class: small
     executor: ruby_with_postgres
     steps:
       - checkout
+      # cimg/ruby:2.7.7-node does come with psql already installed @ v12
+      - check-psql
       - run:
-          name: Install psql
+          name: Install psql 13 explicitly
           command: |
-            sudo apt-get update
-            sudo apt-get install -y postgresql-client-13
-
+            # Ref: https://computingforgeeks.com/how-to-install-postgresql-13-on-ubuntu/
+            sudo apt -y update
+            curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+            echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+            sudo apt install -y postgresql-client-13
+      - check-psql
+      
 workflows:
   main:
     jobs:

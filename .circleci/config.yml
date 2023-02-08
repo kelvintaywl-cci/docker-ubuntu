@@ -4,7 +4,6 @@ executors:
   ruby_with_postgres:
     docker:
       - image: cimg/ruby:2.7.7-node
-        <<: *ruby_envs
       - image: 'circleci/postgres:13-buster-ram'
         environment:
           - POSTGRES_USER: foobar

@@ -13,6 +13,7 @@ commands:
   check-psql:
     steps:
       - run: psql --version
+      - run: PGPASSWORD=hogehoge psql -h 127.0.0.1 -p 5432 -U foobar -d postgres -c "SELECT 1;"
 
 jobs:
   postgres13:
@@ -26,7 +27,7 @@ jobs:
           name: Install psql 13 explicitly
           command: |
             # Ref: https://computingforgeeks.com/how-to-install-postgresql-13-on-ubuntu/
-            sudo apt -y update
+            sudo apt -y update && sudo apt -y upgrade
             curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
             echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
             sudo apt install -y postgresql-client-13
